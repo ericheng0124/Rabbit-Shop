@@ -38,17 +38,27 @@ onLoad(() => {
 <template>
   <!-- 自定义导航栏 -->
   <CustomNavbar />
-  <!-- 自定义轮播图 -->
-  <XtxSwiper :bannerList="bannerList" />
-  <!-- 分类面板 -->
-  <CategoryPanel :categoryList="categoryList" />
-  <!-- 热门推荐 -->
-  <HotPannel :hotList="hotList" />
-  <view> index </view>
+  <!-- 滚动容器 -->
+  <scroll-view class="scroll-view" scroll-y>
+    <!-- 自定义轮播图 -->
+    <XtxSwiper :bannerList="bannerList" />
+    <!-- 分类面板 -->
+    <CategoryPanel :categoryList="categoryList" />
+    <!-- 热门推荐 -->
+    <HotPannel :hotList="hotList" />
+    <!-- 猜你喜欢 -->
+    <XtxGuess />
+  </scroll-view>
 </template>
 
 <style lang="scss">
 Page {
   background-color: #f7f7f7;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.scroll-view {
+  flex: 1;
 }
 </style>
