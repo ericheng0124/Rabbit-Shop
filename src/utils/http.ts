@@ -23,7 +23,7 @@ const httpInterceptor = {
     }
     // 2. 请求超时, 默认 60s
     options.timeout = 10000
-    console.log(options)
+    // console.log(options)
 
     // 3. 添加小程序端请求头标识
     options.header = {
@@ -61,6 +61,7 @@ interface Data<T> {
   result: T
 }
 
+// 创建并导出http实例对象
 // 2.2 添加类型，支持泛型
 export const http = <T>(options: UniApp.RequestOptions) => {
   // 1. 返回 Promise 对象
