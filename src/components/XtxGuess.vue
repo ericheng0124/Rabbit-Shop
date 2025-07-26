@@ -83,6 +83,7 @@ defineExpose({
 <style lang="scss">
 :host {
   display: block;
+  height: 280prx;
 }
 /* 分类标题 */
 .caption {
@@ -128,17 +129,6 @@ defineExpose({
     width: 304rpx;
     height: 304rpx;
   }
-  // .name {
-  //   height: 75rpx;
-  //   margin: 10rpx 0;
-  //   font-size: 26rpx;
-  //   color: #262626;
-  //   overflow: hidden;
-  //   text-overflow: ellipsis;
-  //   display: -webkit-box;
-  //   -webkit-line-clamp: 2;
-  //   -webkit-box-orient: vertical;
-  // }
   .name {
     height: 75rpx;
     margin: 10rpx 0;
