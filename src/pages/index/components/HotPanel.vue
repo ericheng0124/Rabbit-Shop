@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HotItem } from '@/types/home'
+
 // 定义接收的数据
 defineProps<{ hotList: HotItem[] }>()
 </script>
@@ -12,7 +13,7 @@ defineProps<{ hotList: HotItem[] }>()
         <text class="title-text">{{ item.title }}</text>
         <text class="title-desc">{{ item.alt }}</text>
       </view>
-      <navigator hover-class="none" url="/pages/hot/hot" class="cards">
+      <navigator hover-class="none" :url="`/pages/hot/hot?type=${item.type}`" class="cards">
         <image
           v-for="(img, index) in item.pictures"
           :key="index"
