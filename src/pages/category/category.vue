@@ -1,4 +1,3 @@
-import { getHomeBannerAPI } from '../../services/home';
 <script setup lang="ts">
 import { getCategoryTopAPI } from '@/services/category'
 import { getHomeBannerAPI } from '@/services/home'
