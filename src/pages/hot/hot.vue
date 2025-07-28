@@ -25,13 +25,16 @@ uni.setNavigationBarTitle({ title: currHotMap!.title })
 // 推荐封面图
 const bannerPicture = ref('')
 // 推荐选项
-const subTypes = ref<SubTypeItem[]>([])
+const subTypes = ref<(SubTypeItem & { finish?: boolean })[]>([])
 // 高亮下标
 const activeIndex = ref(0)
 // 获取热门推荐数据
 const getHotRecommendData = async () => {
-  const res = await getHotRecommendAPI(currHotMap!.url)
-  console.log(res)
+  const res = await getHotRecommendAPI(currHotMap!.url, {
+    // 使用环境变量，开发环境，修改初始页面方便测试代码
+    page: import.meta.env.DEV ? 30 : 1,
+    pageSize: 10,
+  })
   bannerPicture.value = res.result.bannerPicture
   subTypes.value = res.result.subTypes
 }
@@ -39,6 +42,33 @@ const getHotRecommendData = async () => {
 onLoad(() => {
   getHotRecommendData()
 })
+
+// 滚动触底
+const onScrolltolower = async () => {
+  // 获取当前数据
+  const currSubTypes = subTypes.value[activeIndex.value]
+  // console.log(currSubType)
+  if (currSubTypes.goodsItems.page < currSubTypes.goodsItems.pages) {
+    // 累加当前页码
+    currSubTypes.goodsItems.page++
+  } else {
+    // 标记已结束
+    currSubTypes.finish = true
+    // 退出并轻提示
+    return uni.showToast({
+      icon: 'none',
+      title: '没有更多数据了',
+    })
+  }
+  const res = await getHotRecommendAPI(currHotMap!.url, {
+    subType: currSubTypes.id,
+    page: currSubTypes.goodsItems.page,
+    pageSize: currSubTypes.goodsItems.pageSize,
+  })
+  // 新的列表选项
+  const newSubTypes = res.result.subTypes[activeIndex.value]
+  currSubTypes.goodsItems.items.push(...newSubTypes.goodsItems.items)
+}
 </script>
 
 <template>
@@ -65,6 +95,7 @@ onLoad(() => {
       v-show="activeIndex === index"
       scroll-y
       class="scroll-view"
+      @scrolltolower="onScrolltolower"
     >
       <view class="goods">
         <navigator
@@ -82,7 +113,7 @@ onLoad(() => {
           </view>
         </navigator>
       </view>
-      <view class="loading-text">正在加载...</view>
+      <view class="loading-text">{{ item.finish ? '没有更多数据了' : '正在加载...' }}</view>
     </scroll-view>
   </view>
 </template>
