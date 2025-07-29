@@ -8,7 +8,10 @@ import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
 
 // 获取屏幕边界到安全区域距离
-const { safeAreaInsets } = uni.getSystemInfoSync()
+// const { safeAreaInsets } = uni.getSystemInfoSync()
+// const windowInfo = uni.getWindowInfo()
+// const safeAreaInsets = windowInfo.safeAreaInsets
+const { safeAreaInsets } = uni.getWindowInfo()
 
 // 接收页面参数
 const query = defineProps<{

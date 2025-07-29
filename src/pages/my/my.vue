@@ -3,7 +3,11 @@ import { useGuessList } from '@/composables'
 import { useMemberStore } from '@/stores'
 
 // 获取屏幕边界到安全区域距离
-const { safeAreaInsets } = uni.getSystemInfoSync()
+// const { safeAreaInsets } = uni.getSystemInfoSync()
+// const windowInfo = uni.getWindowInfo()
+// const safeAreaInsets = windowInfo.safeAreaInsets
+const { safeAreaInsets } = uni.getWindowInfo()
+
 // 订单选项
 const orderTypes = [
   { type: 1, text: '待付款', icon: 'icon-currency' },
