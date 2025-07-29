@@ -1,4 +1,4 @@
-{	
+{
 	// 组件自动引入规则
 	"easycom": {
 		"autoscan": true,
@@ -109,15 +109,23 @@
 					"style": {
 						"navigationBarTitleText": "设置"
 					}
+				},
+				{
+					"path": "profile/profile",
+					"style": {
+						"navigationBarTitleText": "个人信息页"
+					}
 				}
 			]
 		}
 	],
 	// 分包预下载规则
 	"preloadRule": {
-		"pages/my/my":{
+		"pages/my/my": {
 			"network": "all",
-			"packages": ["pagesMember"]
+			"packages": [
+				"pagesMember"
+			]
 		}
 	}
 }
