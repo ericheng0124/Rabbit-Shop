@@ -30,7 +30,7 @@ const onGetphonenumber: UniHelper.ButtonOnGetphonenumber = async (event) => {
 const onGetphonenumberSimple = async () => {
   // const res = await postLoginWxMinSimpleAPI('13535337057')
   const res = await postLoginWxMinSimpleAPI('18186698922')
-  // console.log(res)
+  console.log(res)
   loginSuccess(res.result)
 }
 
@@ -43,6 +43,7 @@ const loginSuccess = (profile: LoginResult) => {
     icon: 'success',
     title: '登陆成功！',
   })
+
   setTimeout(() => {
     // 页面跳转
     uni.switchTab({ url: '/pages/my/my' })

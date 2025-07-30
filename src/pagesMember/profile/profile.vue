@@ -3,7 +3,7 @@ import { getMemberProfileAPI, putMemberProfileAPI } from '@/services/profile'
 import { useMemberStore } from '@/stores'
 import type { Gender, ProfileDetail } from '@/types/member'
 import { onLoad } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 // 获取屏幕边界到安全区域距离
 // const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -18,6 +18,10 @@ const getMemberProfileData = async () => {
 
 onLoad(() => {
   getMemberProfileData()
+})
+
+const userAccount = computed<string>(() => {
+  return profile.value!.account?.substring(2)
 })
 
 const memberStore = useMemberStore()
@@ -60,15 +64,35 @@ const onAvatarChange = () => {
 
 // 修改性别
 const onGenderChange: UniHelper.RadioGroupOnChange = (event) => {
-  console.log(event.detail)
+  // console.log(event.detail)
   profile.value.gender = event.detail.value as Gender
+}
+
+// 修改生日
+const onBirthdayChange: UniHelper.DatePickerOnChange = (event) => {
+  // console.log(event.detail)
+  profile.value.birthday = event.detail.value
+}
+
+// 修改城市
+let fullLocationCode: [string, string, string] = ['', '', '']
+const onFullLocationChange: UniHelper.RegionPickerOnChange = (event) => {
+  // 修改前端界面
+  profile.value.fullLocation = event.detail.value.join(' ')
+  // 提交后端更新使用
+  fullLocationCode = event.detail.code!
 }
 
 // 提交保存表单
 const onSubmit = async () => {
+  const { nickname, gender, birthday } = profile.value
   const res = await putMemberProfileAPI({
-    nickname: profile.value?.nickname,
-    gender: profile.value.gender,
+    nickname,
+    gender,
+    birthday,
+    provinceCode: fullLocationCode[0],
+    cityCode: fullLocationCode[1],
+    countyCode: fullLocationCode[2],
   })
   // 更新store中的昵称
   memberStore.profile!.nickname = res.result.nickname
@@ -104,7 +128,8 @@ const onSubmit = async () => {
       <view class="form-content">
         <view class="form-item">
           <text class="label">账号</text>
-          <text class="account">{{ profile?.account }}</text>
+          <!-- <text class="account">{{ profile?.account }}</text> -->
+          <text class="account">{{ userAccount }}</text>
         </view>
         <view class="form-item">
           <text class="label">昵称</text>
@@ -131,6 +156,7 @@ const onSubmit = async () => {
             start="1900-01-01"
             :end="new Date()"
             :value="profile?.birthday"
+            @change="onBirthdayChange"
           >
             <view v-if="profile?.birthday">{{ profile?.birthday }}</view>
             <view class="placeholder" v-else>请选择日期</view>
@@ -138,7 +164,12 @@ const onSubmit = async () => {
         </view>
         <view class="form-item">
           <text class="label">城市</text>
-          <picker class="picker" mode="region" :value="profile?.fullLocation?.split(' ')">
+          <picker
+            @change="onFullLocationChange"
+            class="picker"
+            mode="region"
+            :value="profile?.fullLocation?.split(' ')"
+          >
             <view v-if="profile?.fullLocation">{{ profile?.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
