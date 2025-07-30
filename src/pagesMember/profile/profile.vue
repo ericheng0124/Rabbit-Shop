@@ -83,13 +83,20 @@ const onFullLocationChange: UniHelper.RegionPickerOnChange = (event) => {
   fullLocationCode = event.detail.code!
 }
 
+// 修改职业
+const onProfessionBlur: UniHelper.InputOnBlur = (event) => {
+  // console.log(event.detail)
+  profile.value.profession = event.detail.value
+}
+
 // 提交保存表单
 const onSubmit = async () => {
-  const { nickname, gender, birthday } = profile.value
+  const { nickname, gender, birthday, profession } = profile.value
   const res = await putMemberProfileAPI({
     nickname,
     gender,
     birthday,
+    profession,
     provinceCode: fullLocationCode[0],
     cityCode: fullLocationCode[1],
     countyCode: fullLocationCode[2],
@@ -170,13 +177,20 @@ const onSubmit = async () => {
             mode="region"
             :value="profile?.fullLocation?.split(' ')"
           >
-            <view v-if="profile?.fullLocation">{{ profile?.fullLocation }}</view>
+            <view v-if="profile?.fullLocation">{{ profile.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
         </view>
         <view class="form-item">
           <text class="label">职业</text>
-          <input class="input" type="text" placeholder="请填写职业" :value="profile?.profession" />
+          <input
+            class="input"
+            type="text"
+            placeholder="请填写职业"
+            v-model="profile!.profession"
+            :maxlength="20"
+            @blur="onProfessionBlur"
+          />
         </view>
       </view>
       <!-- 提交按钮 -->
