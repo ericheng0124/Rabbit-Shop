@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getMemberProfileAPI, putMemberProfileAPI } from '@/services/profile'
-import type { ProfileDetail } from '@/types/member'
+import { useMemberStore } from '@/stores'
+import type { Gender, ProfileDetail } from '@/types/member'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 
@@ -19,6 +20,7 @@ onLoad(() => {
   getMemberProfileData()
 })
 
+const memberStore = useMemberStore()
 // 修改头像方法
 const onAvatarChange = () => {
   // 调用拍照/选择图片
@@ -38,7 +40,10 @@ const onAvatarChange = () => {
         success: (res) => {
           if (res.statusCode === 200) {
             const avatar = JSON.parse(res.data).result.avatar
+            // 个人信息页数据更新
             profile.value!.avatar = avatar
+            // store头像更新
+            memberStore.profile!.avatar = avatar
             uni.showToast({
               icon: 'success',
               title: '上传成功！',
@@ -53,16 +58,29 @@ const onAvatarChange = () => {
   })
 }
 
+// 修改性别
+const onGenderChange: UniHelper.RadioGroupOnChange = (event) => {
+  console.log(event.detail)
+  profile.value.gender = event.detail.value as Gender
+}
+
 // 提交保存表单
 const onSubmit = async () => {
   const res = await putMemberProfileAPI({
     nickname: profile.value?.nickname,
+    gender: profile.value.gender,
   })
+  // 更新store中的昵称
+  memberStore.profile!.nickname = res.result.nickname
   // console.log(res)
   uni.showToast({
     icon: 'success',
     title: '修改成功',
   })
+  // 返回上一页
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 1500)
 }
 </script>
 
@@ -94,7 +112,7 @@ const onSubmit = async () => {
         </view>
         <view class="form-item">
           <text class="label">性别</text>
-          <radio-group>
+          <radio-group @change="onGenderChange">
             <label class="radio">
               <radio value="男" color="#27ba9b" :checked="profile?.gender === '男'" />
               男
