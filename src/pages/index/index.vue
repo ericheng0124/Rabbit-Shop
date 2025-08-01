@@ -21,6 +21,7 @@ const categoryList = ref<CategoryItem[]>([])
 const getHomeCategoryData = async () => {
   const res = await getCategoryAPI()
   categoryList.value = res.result
+  // console.log(res)
 }
 
 // 获取热门推荐数据

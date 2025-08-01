@@ -12,7 +12,9 @@
     <view
       class="layer attr-content"
       :class="{ 'safe-area-inset-bottom': safeAreaInsetBottom }"
-      :style="{ borderRadius: borderRadius + 'rpx ' + borderRadius + 'rpx 0 0' }"
+      :style="{
+        borderRadius: borderRadius + 'rpx ' + borderRadius + 'rpx 0 0',
+      }"
     >
       <view class="specification-wrapper">
         <scroll-view class="specification-wrapper-content" scroll-y="true">
@@ -151,6 +153,7 @@
 /* eslint-disable */
 var vk // vk依赖
 var goodsCache = {} // 本地商品缓存
+
 export default {
   name: 'vk-data-goods-sku-popup',
   emits: [
@@ -1348,6 +1351,7 @@ export default {
       align-items: center;
       justify-content: space-between;
       padding: 0 26rpx;
+      margin-bottom: 40rpx; // 提高底部弹出距离
       box-sizing: border-box;
       .layer-btn {
         width: 335rpx;

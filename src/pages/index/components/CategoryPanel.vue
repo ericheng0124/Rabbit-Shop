@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CategoryItem } from '@/types/home'
+import { onLoad } from '@dcloudio/uni-app'
 
 // 定义props接收数据
 defineProps<{ categoryList: CategoryItem[] }>()
