@@ -12,3 +12,15 @@ export const postAddCartAPI = (data: { skuId: string; count: number }) => {
     data,
   })
 }
+
+/**
+  @description  购物车-获取购物车列表
+  @method  GET
+  @url  /member/cart
+ */
+export const getCartListAPI = () => {
+  return http({
+    method: 'GET',
+    url: '/member/cart',
+  })
+}
