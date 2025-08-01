@@ -1,3 +1,4 @@
+import type { CartItem } from '@/types/cart'
 import { http } from '@/utils/http'
 
 /**
@@ -19,7 +20,7 @@ export const postAddCartAPI = (data: { skuId: string; count: number }) => {
   @url  /member/cart
  */
 export const getCartListAPI = () => {
-  return http({
+  return http<CartItem[]>({
     method: 'GET',
     url: '/member/cart',
   })
