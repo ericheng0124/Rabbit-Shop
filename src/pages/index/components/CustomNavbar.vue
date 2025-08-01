@@ -8,7 +8,7 @@ const { safeAreaInsets } = uni.getWindowInfo()
 </script>
 
 <template>
-  <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
+  <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 40 + 'px' }">
     <!-- logo文字 -->
     <view class="logo">
       <image class="logo-image" src="@/static/images/logo.png"></image>

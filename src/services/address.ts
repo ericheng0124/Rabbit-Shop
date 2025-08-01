@@ -52,3 +52,16 @@ export const putMemberAddressByIdAPI = (id: string, data: AddressParams) => {
     data,
   })
 }
+
+/**
+  @description 会员中心-地址管理  删除收货地址
+  @method DELETE
+  @url /member/address/{id}
+  @param id 地址id （路径参数）
+ */
+export const deleteMemberAddressByIdAPI = (id: string) => {
+  return http({
+    url: `/member/address/${id}`,
+    method: 'DELETE',
+  })
+}
