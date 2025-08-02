@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { deleteCartListAPI, getCartListAPI } from '@/services/cart'
+import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
+import {
+  deleteCartListAPI,
+  getCartListAPI,
+  putCartBySkuIdAPI,
+  putIsCartSelectedAll,
+} from '@/services/cart'
 import { useMemberStore } from '@/stores'
 import type { CartItem } from '@/types/cart'
 import { onShow } from '@dcloudio/uni-app'
@@ -21,6 +27,7 @@ onShow(() => {
   }
 })
 
+// 删除购物车商品
 const onDeleteCart = (skuId: string) => {
   // 弹窗二次确认
   uni.showModal({
@@ -34,6 +41,36 @@ const onDeleteCart = (skuId: string) => {
       }
     },
   })
+}
+
+// 修改商品数量
+const onChangeCount = async (event: InputNumberBoxEvent) => {
+  // console.log(event)
+  await putCartBySkuIdAPI(event.index, { count: event.value })
+}
+
+// 修改选中状态
+const onChangeSelected = (item: CartItem) => {
+  // console.log(item)
+  // 修改为原值取反
+  item.selected = !item.selected
+  // 后端数据更新
+  putCartBySkuIdAPI(item.skuId, { selected: item.selected })
+}
+
+// 计算全选状态
+const isSelectedAll = computed(() => {
+  return cartListData.value.length && cartListData.value.every((v) => v.selected)
+})
+
+// 修改全选
+const onChangeSelectedAll = () => {
+  // 全选状态取反
+  const _isSelectedAll = !isSelectedAll.value
+  // 前端数据更新
+  cartListData.value.forEach((item) => (item.selected = _isSelectedAll))
+  // 后端数据更新
+  putIsCartSelectedAll({ selected: _isSelectedAll })
 }
 </script>
 
@@ -55,9 +92,13 @@ const onDeleteCart = (skuId: string) => {
             <!-- 商品信息 -->
             <view class="goods">
               <!-- 选中状态 -->
-              <text class="checkbox" :class="{ checked: item.selected }"></text>
+              <text
+                @tap="onChangeSelected(item)"
+                class="checkbox"
+                :class="{ checked: item.selected }"
+              ></text>
               <navigator
-                :url="`/pages/goods/goods?id=${item.skuId}`"
+                :url="`/pages/goods/goods?id=${item.id}`"
                 hover-class="none"
                 class="navigator"
               >
@@ -70,9 +111,13 @@ const onDeleteCart = (skuId: string) => {
               </navigator>
               <!-- 商品数量 -->
               <view class="count">
-                <text class="text">-</text>
-                <input class="input" type="number" :value="item.count.toString()" />
-                <text class="text">+</text>
+                <vk-data-input-number-box
+                  v-model="item.count"
+                  :min="1"
+                  :max="item.stock"
+                  @change="onChangeCount"
+                  :index="item.skuId"
+                />
               </view>
             </view>
             <!-- 右侧删除按钮 -->
@@ -94,7 +139,7 @@ const onDeleteCart = (skuId: string) => {
       </view>
       <!-- 吸底工具栏 -->
       <view class="toolbar">
-        <text class="all" :class="{ checked: true }">全选</text>
+        <text @tap="onChangeSelectedAll" class="all" :class="{ checked: isSelectedAll }">全选</text>
         <text class="text">合计:</text>
         <text class="amount">100</text>
         <view class="button-grounp">

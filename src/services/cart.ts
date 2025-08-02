@@ -39,3 +39,33 @@ export const deleteCartListAPI = (data: { ids: string[] }) => {
     data,
   })
 }
+
+/**
+  @description  购物车-修改购物车单品
+  @method   PUT
+  @url  /member/cart/{skuId}
+  @param  selected  boolean  选中状态 - 可选参数
+  @param  count  integer  商品数量 - 可选参数
+ */
+export const putCartBySkuIdAPI = (skuId: string, data: { selected?: boolean; count?: number }) => {
+  return http({
+    method: 'PUT',
+    url: `/member/cart/${skuId}`,
+    data,
+  })
+}
+
+/**
+  @description  购物车-购物车全选/取消全选
+  @method  PUT
+  @url  /member/cart/selected
+  @param  Body 必要参数 selected  boolean 是否选中 
+
+ */
+export const putIsCartSelectedAll = (data: { selected: boolean }) => {
+  return http({
+    method: 'PUT',
+    url: '/member/cart/selected',
+    data,
+  })
+}
