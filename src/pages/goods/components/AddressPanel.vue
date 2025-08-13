@@ -1,9 +1,37 @@
 // AddressPanel.vue
 <script setup lang="ts">
+import { useAddressStore } from '@/stores/modules/address'
+import type { AddressItem } from '@/types/address'
+
 // 调用父组件方法
 const emit = defineEmits<{
   (event: 'close'): void
+  (event: 'select'): void // 新增 select 事件
 }>()
+
+const props = defineProps<{
+  addressList: AddressItem[]
+  changeAddress: (item: AddressItem) => void
+}>()
+
+// 获取地址 store
+const addressStore = useAddressStore()
+
+// 判断当前地址是否应该显示选中图标
+const isChecked = (item: AddressItem) => {
+  // 如果有选中的地址，则比较 ID
+  if (addressStore.selectedAddress) {
+    return item.id === addressStore.selectedAddress.id
+  }
+  // 否则检查是否是默认地址
+  return item.isDefault
+}
+
+// 新增：处理地址选择
+const handleSelect = (item: AddressItem) => {
+  props.changeAddress(item) // 更新选中地址
+  emit('select') // 触发 select 事件通知父组件关闭弹层
+}
 </script>
 
 <template>
@@ -14,20 +42,15 @@ const emit = defineEmits<{
     <view class="title">配送至</view>
     <!-- 内容 -->
     <view class="content">
-      <view class="item">
-        <view class="user">李明 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-checked"></text>
-      </view>
-      <view class="item">
-        <view class="user">王东 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-ring"></text>
-      </view>
-      <view class="item">
-        <view class="user">张三 13824686868</view>
-        <view class="address">北京市朝阳区孙河安平北街6号院</view>
-        <text class="icon icon-ring"></text>
+      <view
+        class="item"
+        v-for="(item, index) in props.addressList"
+        :key="index"
+        @tap="handleSelect(item)"
+      >
+        <view class="user">{{ item.receiver }} {{ item.contact }}</view>
+        <view class="address">{{ item.fullLocation }}{{ item.address }}</view>
+        <text class="icon" :class="isChecked(item) ? 'icon-checked' : 'icon-ring'"></text>
       </view>
     </view>
     <view class="footer">
