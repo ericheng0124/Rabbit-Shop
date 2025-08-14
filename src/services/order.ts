@@ -97,3 +97,33 @@ export const getMemberOrderLogisticsByIdAPI = (id: string) => {
     url: `/member/order/${id}/logistics`,
   })
 }
+
+/**
+@description  会员中心-订单管理 删除订单
+@method  DELETE
+@url  /member/order
+@params  ids  array[string]  订单集合  必需
+ */
+export const deleteMemberOrderAPI = (data: { ids: string[] }) => {
+  return http({
+    method: 'DELETE',
+    url: '/member/order',
+    data,
+  })
+}
+
+/**
+@description  会员中心-订单管理-取消订单
+@method  PUT
+@url /member/order/{id}/cancel
+@param  Path 参数 id string 订单id
+@param  cancelReason string 取消理由 必需
+ */
+
+export const putMemberCancelOrderAPI = (id: string, data: { cancelReason: string }) => {
+  return http<OrderResult>({
+    method: 'PUT',
+    url: `/member/order/${id}/cancel`,
+    data,
+  })
+}

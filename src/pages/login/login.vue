@@ -34,6 +34,7 @@ const onGetphonenumberSimple = async () => {
   loginSuccess(res.result)
 }
 
+// 登陆成功
 const loginSuccess = (profile: LoginResult) => {
   // 保存会员信息
   const memberStore = useMemberStore()
