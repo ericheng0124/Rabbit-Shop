@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { useGuessList } from '@/composables'
 import { OrderState, orderStateList } from '@/services/constants'
-import { getMemberOrderByIdAPI, putMemberOrderReceiptByIdAPI } from '@/services/order'
-import type { OrderResult } from '@/types/order'
+import {
+  getMemberOrderByIdAPI,
+  getMemberOrderLogisticsByIdAPI,
+  putMemberOrderReceiptByIdAPI,
+} from '@/services/order'
+import type { LogisticItem, OrderResult } from '@/types/order'
 import { onLoad, onReady } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import DetailSkeleton from './components/DetailSkeleton.vue'
@@ -80,17 +84,23 @@ const order = ref<OrderResult>()
 // 获取订单详情
 const getMemberOrderByIdData = async () => {
   const res = await getMemberOrderByIdAPI(query.id)
-  console.log(res)
+  // console.log(res)
   order.value = res.result
+  if (
+    [OrderState.DaiShouHuo, OrderState.DaiPingJia, OrderState.YiWanCheng].includes(
+      order.value.orderState,
+    )
+  ) {
+    getMemberOrderLogisticsByIdData()
+  }
 }
 
-onLoad(() => {
-  getMemberOrderByIdData()
-})
-
-// 倒计时结束时间
-const onTimeup = () => {
-  order.value!.orderState = OrderState.YiQuXiao
+const logisticList = ref<LogisticItem[]>([])
+// 获取物流信息
+const getMemberOrderLogisticsByIdData = async () => {
+  const res = await getMemberOrderLogisticsByIdAPI(query.id)
+  // console.log(res)
+  logisticList.value = res.result.list
 }
 
 // 订单支付
@@ -110,7 +120,7 @@ const onOrderPay = async () => {
 
 // 是否为开发环境
 const isDev = import.meta.env.DEV
-
+// 模拟发货
 const onOrderSend = async () => {
   if (isDev) {
     await getMemberOrderConsignmentByIdAPI(query.id)
@@ -122,9 +132,9 @@ const onOrderSend = async () => {
 
 // 确认收货
 const onOrderConfirm = () => {
-  // 二次确认的弹层
+  // 二次确认弹窗
   uni.showModal({
-    content: '为保障您的权益，请在收到货并确认无误后，再点击确认收货',
+    content: '为保障您的权益，请收到货并确认无误后，再确认收货',
     success: async (success) => {
       if (success.confirm) {
         const res = await putMemberOrderReceiptByIdAPI(query.id)
@@ -133,6 +143,15 @@ const onOrderConfirm = () => {
       }
     },
   })
+}
+
+onLoad(() => {
+  getMemberOrderByIdData()
+})
+
+// 倒计时结束时间
+const onTimeup = () => {
+  order.value!.orderState = OrderState.YiQuXiao
 }
 </script>
 
@@ -186,8 +205,8 @@ const onOrderConfirm = () => {
             <!-- 待发货状态：模拟发货,开发期间使用,用于修改订单状态为已发货 -->
             <view
               v-if="isDev && order.orderState == OrderState.DaiFaHuo"
-              class="button"
               @tap="onOrderSend"
+              class="button"
             >
               模拟发货
             </view>
@@ -205,16 +224,16 @@ const onOrderConfirm = () => {
       <!-- 配送状态 -->
       <view class="shipment">
         <!-- 订单物流信息 -->
-        <view v-for="item in 1" :key="item" class="item">
+        <view v-for="item in logisticList" :key="item.id" class="item">
           <view class="message">
-            您已在广州市天河区黑马程序员完成取件，感谢使用菜鸟驿站，期待再次为您服务。
+            {{ item.text }}
           </view>
-          <view class="date"> 2023-04-14 13:14:20 </view>
+          <view class="date"> {{ item.time }} </view>
         </view>
         <!-- 用户收货地址 -->
         <view class="locate">
-          <view class="user"> 张三 13333333333 </view>
-          <view class="address"> 广东省 广州市 天河区 黑马程序员 </view>
+          <view class="user"> {{ order.receiverContact }} {{ order.receiverMobile }} </view>
+          <view class="address"> {{ order.receiverAddress }} </view>
         </view>
       </view>
 
