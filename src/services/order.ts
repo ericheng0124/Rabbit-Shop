@@ -1,6 +1,8 @@
 import { http } from '@/utils/http'
 import type {
   OrderCreateParams,
+  OrderListParams,
+  OrderListResult,
   OrderLogisticResult,
   OrderPreResult,
   OrderResult,
@@ -124,6 +126,24 @@ export const putMemberCancelOrderAPI = (id: string, data: { cancelReason: string
   return http<OrderResult>({
     method: 'PUT',
     url: `/member/order/${id}/cancel`,
+    data,
+  })
+}
+
+/**
+@description  会员中心-订单管理 获取订单列表
+@method  GET
+@url  /member/order
+@params Query 参数
+        page integer 页码 可选
+        pageSize integer 页容量 可选
+        orderState integer 可选
+ */
+
+export const getMemberOrderAPI = (data: OrderListParams) => {
+  return http<OrderListResult>({
+    method: 'GET',
+    url: `/member/order`,
     data,
   })
 }
