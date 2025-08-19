@@ -2,12 +2,14 @@
 import { OrderState } from '@/services/constants'
 import { orderStateList } from '@/services/constants'
 import { getMemberOrderAPI } from '@/services/order'
+import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
 import type { OrderItem } from '@/types/order'
 import type { OrderListParams } from '@/types/order'
-import { onMounted, ref } from 'vue'
+import { onLoad, onShow } from '@dcloudio/uni-app'
+import { ref } from 'vue'
 
 // 获取屏幕边界到安全区域距离
-const { safeAreaInsets } = uni.getSystemInfoSync()
+const { safeAreaInsets } = uni.getWindowInfo()
 
 // 定义 porps
 const props = defineProps<{
@@ -21,20 +23,93 @@ const queryParams: OrderListParams = {
   orderState: props.orderState,
 }
 
-// 获取订单列表
+// 订单加载已结束的标记
+const orderFinish = ref(false)
+
+// 订单列表
 const orderList = ref<OrderItem[]>([])
+// 获取订单列表
 const getMemberOrderData = async () => {
+  // 退出判断
+  if (orderFinish.value === true) {
+    return uni.showToast({
+      title: '已没有新数据了！',
+      icon: 'none',
+    })
+  }
   const res = await getMemberOrderAPI(queryParams)
-  orderList.value = res.result.items
+  // 数组追加赋值
+  // orderList.value = res.result.items
+  orderList.value.push(...res.result.items)
+  if (queryParams.page! < res.result.pages) {
+    // 累加页码
+    queryParams.page!++
+  } else {
+    orderFinish.value = true
+  }
 }
 
-onMounted(() => {
+const resetData = () => {
+  orderFinish.value = false
+  orderList.value = []
+  queryParams.page = 1
+}
+
+onShow(() => {
   getMemberOrderData()
 })
+
+// 数据加载标识
+const isLoading = ref(false)
+onLoad(async () => {
+  isLoading.value = true
+  await getMemberOrderData()
+  isLoading.value = false
+})
+
+// 订单支付
+const onOrderPay = async (id: string) => {
+  // 通过环境变量区分开发环境
+  if (import.meta.env.DEV) {
+    // 开发环境：模拟支付，修改订单状态为已支付
+    await getPayMockAPI({ orderId: id })
+  } else {
+    // 生产环境：获取支付参数 + 发起微信支付
+    const res = await getPayWxPayMiniPayAPI({ orderId: id })
+    await wx.requestPayment(res.result)
+  }
+  // 成功提示
+  uni.showToast({
+    title: '支付成功',
+  })
+  // 更新订单状态
+  const order = orderList.value.find((v) => v.id === id)
+  order!.orderState = OrderState.DaiFaHuo
+}
+
+// 当前下拉刷新状态
+const isTriggered = ref(false)
+// 下拉刷新数据
+const onRefresherrefresh = async () => {
+  // 修改标记状态
+  isTriggered.value = true
+  // 重置数据
+  resetData()
+  await getMemberOrderData()
+  // 关闭动画
+  isTriggered.value = false
+}
 </script>
 
 <template>
-  <scroll-view scroll-y class="orders">
+  <scroll-view
+    scroll-y
+    class="orders"
+    refresher-enabled
+    :refresher-triggered="isTriggered"
+    @scrolltolower="getMemberOrderData"
+    @refresherrefresh="onRefresherrefresh"
+  >
     <view class="card" v-for="order in orderList" :key="order.id">
       <!-- 订单信息 -->
       <view class="status">
@@ -70,7 +145,7 @@ onMounted(() => {
       <view class="action">
         <!-- 待付款状态：显示去支付按钮 -->
         <template v-if="order.orderState === OrderState.DaiFuKuan">
-          <view class="button primary">去支付</view>
+          <view class="button primary" @tap="onOrderPay(order.id)">去支付</view>
         </template>
         <template v-else>
           <navigator
@@ -89,7 +164,7 @@ onMounted(() => {
     </view>
     <!-- 底部提示文字 -->
     <view class="loading-text" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
-      {{ true ? '没有更多数据~' : '正在加载...' }}
+      {{ orderFinish ? '没有更多数据~' : '正在加载...' }}
     </view>
   </scroll-view>
 </template>
