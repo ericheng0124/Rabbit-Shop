@@ -143,7 +143,7 @@
     </scroll-view>
   </view>
 </template>
-<style>
+<style lang="scss">
 @import './style/detail.scss';
 .sk-transparent {
   color: transparent !important;

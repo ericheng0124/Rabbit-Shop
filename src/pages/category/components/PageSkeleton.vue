@@ -150,8 +150,7 @@
   </view>
 </template>
 
-<style>
-@import './style/category.scss';
+<style lang="scss">
 .sk-transparent {
   color: transparent !important;
 }

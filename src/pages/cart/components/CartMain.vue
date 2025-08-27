@@ -205,7 +205,7 @@ const { guessRef, onScrolltolower } = useGuessList()
   </scroll-view>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 // 根元素
 :host {
   height: 100vh;

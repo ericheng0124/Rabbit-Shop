@@ -155,10 +155,11 @@
     </view>
   </view>
 </template>
-<style>
-@import './style/CategoryPanel.scss';
-@import './style/HotPanel.scss';
-@import './style/CustomNavbar.scss';
+<style lang="scss">
+@import '@/pages/index/components/style/CustomNavbar.scss';
+@import '@/pages/index/components/style/CategoryPanel.scss';
+@import '@/pages/index/components/style/HotPanel.scss';
+@import '@/components/style/XtxGuess.scss';
 @import '@/components/style/XtxSwiper.scss';
 .sk-transparent {
   color: transparent !important;
