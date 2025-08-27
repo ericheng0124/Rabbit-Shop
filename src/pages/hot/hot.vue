@@ -119,6 +119,11 @@ const onScrolltolower = async () => {
 </template>
 
 <style lang="scss">
+/* #ifdef H5 */
+uni-image {
+  width: 100% !important;
+}
+/* #endif */
 page {
   height: 100%;
   background-color: #f4f4f4;

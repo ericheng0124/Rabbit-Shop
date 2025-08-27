@@ -156,6 +156,10 @@
   </view>
 </template>
 <style>
+@import './style/CategoryPanel.scss';
+@import './style/HotPanel.scss';
+@import './style/CustomNavbar.scss';
+@import '@/components/style/XtxSwiper.scss';
 .sk-transparent {
   color: transparent !important;
 }

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import OrderList from './components/OrderList.vue'
+import { useMemberStore } from '@/stores/modules/member'
+import { useGuessList } from '@/composables'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getWindowInfo()
 // tabs 数据
@@ -17,10 +19,17 @@ const query = defineProps<{ type: string }>()
 
 // 高亮下标
 const activeIndex = ref(orderTabs.value.findIndex((v) => v.orderState === Number(query.type)))
+
+// 获取会员信息
+const memberStore = useMemberStore()
+
+// 下拉刷新分页加载猜你喜欢
+const { guessRef, onScrolltolower } = useGuessList()
 </script>
 
 <template>
-  <view class="viewport">
+  <!-- 情况1：已登录 -->
+  <view class="viewport" v-if="memberStore.profile">
     <!-- tabs -->
     <view class="tabs">
       <text
@@ -47,6 +56,20 @@ const activeIndex = ref(orderTabs.value.findIndex((v) => v.orderState === Number
       </swiper-item>
     </swiper>
   </view>
+  <!-- 情况2：未登录 -->
+  <scroll-view scroll-y class="scroll-view" @scrolltolower="onScrolltolower" v-else>
+    <!-- 未登录: 提示登录 -->
+    <view class="login-blank">
+      <text class="text">登录后可查看订单列表</text>
+      <navigator url="/pages/login/login" hover-class="none">
+        <button class="button">去登录</button>
+      </navigator>
+    </view>
+    <!-- 猜你喜欢 -->
+    <XtxGuess ref="guessRef"></XtxGuess>
+    <!-- 底部占位空盒子 -->
+    <view class="toolbar-height"></view>
+  </scroll-view>
 </template>
 
 <style lang="scss">
@@ -258,6 +281,33 @@ page {
     font-size: 28rpx;
     color: #666;
     padding: 20rpx 0;
+  }
+}
+
+.login-blank {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 60vh;
+  .image {
+    width: 400rpx;
+    height: 281rpx;
+  }
+  .text {
+    color: #444;
+    font-size: 26rpx;
+    margin: 20rpx 0;
+  }
+  .button {
+    width: 240rpx !important;
+    height: 60rpx;
+    line-height: 60rpx;
+    margin-top: 20rpx;
+    font-size: 26rpx;
+    border-radius: 60rpx;
+    color: #fff;
+    background-color: #27ba9b;
   }
 }
 </style>

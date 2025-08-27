@@ -9,7 +9,12 @@
         <view class="title sk-transparent sk-text-14-2857-702 sk-text">订单详情</view>
       </view>
     </view>
-    <scroll-view scroll-y="true" class="viewport viewport" id="scroller" enable-back-to-top="true">
+    <scroll-view
+      :scroll-y="true"
+      class="viewport viewport"
+      id="scroller"
+      :enable-back-to-top="true"
+    >
       <view class="overview sk-image" style="padding-top: 74px">
         <view
           class="status icon-clock sk-transparent sk-text-0-0000-427 sk-text sk-pseudo sk-pseudo-circle"
@@ -139,6 +144,7 @@
   </view>
 </template>
 <style>
+@import './style/detail.scss';
 .sk-transparent {
   color: transparent !important;
 }

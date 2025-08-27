@@ -49,6 +49,7 @@ const getMemberOrderData = async () => {
   }
 }
 
+// 重置数据
 const resetData = () => {
   orderFinish.value = false
   orderList.value = []
@@ -85,6 +86,10 @@ const onOrderPay = async (id: string) => {
   // 更新订单状态
   const order = orderList.value.find((v) => v.id === id)
   order!.orderState = OrderState.DaiFaHuo
+
+  setTimeout(() => {
+    uni.navigateTo({ url: '/pagesOrder/list/list?type=2' })
+  }, 1500)
 }
 
 // 当前下拉刷新状态
@@ -170,6 +175,12 @@ const onRefresherrefresh = async () => {
 </template>
 
 <style lang="scss">
+/* #ifdef H5 */
+uni-image {
+  height: 100% !important;
+  width: 100% !important;
+}
+/* #endif */
 // 订单列表
 .orders {
   .card {

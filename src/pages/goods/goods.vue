@@ -300,6 +300,12 @@ const onBuyNow = (event: SkuPopupEvent) => {
 </template>
 
 <style lang="scss">
+/* #ifdef H5 */
+uni-image {
+  height: 100% !important;
+  width: 100% !important;
+}
+/* #endif */
 page {
   height: 100%;
   overflow: hidden;

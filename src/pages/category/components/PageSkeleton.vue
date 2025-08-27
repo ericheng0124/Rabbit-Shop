@@ -151,6 +151,7 @@
 </template>
 
 <style>
+@import './style/category.scss';
 .sk-transparent {
   color: transparent !important;
 }
