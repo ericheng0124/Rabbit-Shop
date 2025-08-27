@@ -156,7 +156,6 @@
   </view>
 </template>
 <style lang="scss">
-@import '@/pages/index/components/style/CustomNavbar.scss';
 @import '@/pages/index/components/style/CategoryPanel.scss';
 @import '@/pages/index/components/style/HotPanel.scss';
 @import '@/components/style/XtxGuess.scss';
